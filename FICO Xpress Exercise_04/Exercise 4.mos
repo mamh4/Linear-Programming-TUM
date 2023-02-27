@@ -1,0 +1,49 @@
+!@encoding CP1252
+model ModelName
+uses "mmxprs", "mmodbc";
+ 
+declarations
+	!Sets
+	Products: set of string
+	Machines: set of string
+	!Parameters
+	FC: array(Products) of real
+	I: array(Products) of real !it might be decimal ;)
+	t: array(Machines, Products) of real
+	T: array(Machines) of real
+	!Decision Variables
+	x: array(Products) of mpvar
+	!Constraints
+	ctCapacity: array(Machines) of linctr
+	!Objective function split ;)
+	FixedCosts: linctr 
+	Revenue: linctr
+	Profit: linctr
+end-declarations
+
+initialisations from "mmsheet.excel:noindex;Exercise4.xls"
+	Products as '[sheet1$E3:G3]'
+	Machines as '[sheet1$D4:D6]'
+	T as '[sheet1$D15:D17]'!should not include index
+	FC as '[sheet1$D11:D13]'
+	I as '[sheet1$E8:G8]'
+	t as '[sheet1$E4:G6]'
+end-initialisations
+
+!forall(i in Products) create(x(i)) no need to include however include anyways :p
+
+!Constraints
+forall(j in Machines) ctCapacity(j):=
+	sum(i in Products) x(i)*t(j,i) <= T(j)
+	
+!Objective Value
+Revenue:= sum(i in Products) x(i)*I(i)
+FixedCosts := sum(i in Products) x(i)*FC(i)
+! Or Profit:= sum(k in Products) x(k)*I(k)- sum(l in Products) x(l)*FC(l)
+maximise(Revenue) !- FixedCosts)
+
+
+		
+
+
+end-model

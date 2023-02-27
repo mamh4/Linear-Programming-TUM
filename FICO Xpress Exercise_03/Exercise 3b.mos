@@ -1,0 +1,36 @@
+!@encoding CP1252
+model ModelName
+uses "mmxprs"; 
+
+declarations
+	!Sets
+	Products: set of string
+	Machines: set of string
+	!Parameters
+	Income: array(Products) of real
+	Prod_Mach_Consumption: array(Machines, Products) of real
+	Capacity: array(Machines) of real
+	!Decision Variables
+	x: array(Products) of mpvar
+	!Constraints and Objective Function
+	ctCapacity: array(Machines) of linctr !FORGOT TO ADD AS ARRAY
+	Profit: linctr
+end-declarations
+
+initialisations from "3c.txt"
+	Capacity; Prod_Mach_Consumption; Income; Products; Machines
+end-initialisations
+
+!Constraints
+forall(j in Machines) ctCapacity(j):= !start with forall since there are many constraints of same structure
+	sum(i in Products) x(i)*Prod_Mach_Consumption(j,i) <= Capacity(j)
+
+!Objective Function
+Profit:= sum(i in Products) x(i)*Income(i)
+
+maximise(Profit)
+
+
+
+
+end-model

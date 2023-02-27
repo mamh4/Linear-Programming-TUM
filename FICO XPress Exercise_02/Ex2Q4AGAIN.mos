@@ -1,0 +1,55 @@
+!@encoding CP1252
+model ModelName
+uses "mmxprs"; !gain access to the Xpress-Optimizer solver
+declarations
+!sets
+Products: set of string
+Machines: set of string
+Day:range
+lastDay: integer
+!Paramters
+Income: array(Products) of integer
+Capacity: array(Machines, Day) of integer
+ConCoef: array(Machines, Products) of integer
+!Decision variables
+x: array(Products, Day) of mpvar
+!Capacity
+ctCapacity: array(Machines, Day) of linctr
+!Objective Funcation
+Profit: linctr
+end-declarations
+
+!We initialise twice because day is a component in the other variable so it has to be initialised first to be able to initialise the others
+initialisations from "ex2-4.txt"
+lastDay
+end-initialisations
+Day := 1..lastDay !Day := 1..lastDay !When we assign values outside declaration we use := instead of =.Secondly we need to initialise lastDay first so that we can assign a value to Day!
+
+initialisations from "ex2-4.txt"
+	Products; Machines; Income; Capacity; ConCoef
+end-initialisations
+
+!Constraint code 1| Convert all decision variables to Integer unless you wanna produce decimal quantities
+forall(e in Products, k in Day)
+x(e,k) is_integer
+
+!Constraint code 2| We want for every machine the sum of the quantities produced to be less than the capacity of that machine
+forall(m in Machines, d in Day)
+ctCapacity(m,d):= sum(p in Products) ConCoef(m,p)*x(p,d) <= Capacity(m,d)
+
+!Objective function code# We want summation of quantities multiplied by the their respective mariginal Income 
+Profit := sum(p in Products, d in Day) Income(p)*x(p,d)
+maximise(Profit)  
+
+!Slacks. Remember we have a slack for each constraint
+forall(z in Machines, s in Day)
+writeln("Slack of ", z, " in day ", s, " :", -getsol(ctCapacity(z,s)))
+
+!Solutions
+forall(c in Products, v in Day)
+writeln("Produce quantity of Product ",c," on day ",v, " of: ",+ getsol(x(c,v)))
+!Notice something weird???
+!IT Should be Integer you IDIOT
+
+	
+end-model

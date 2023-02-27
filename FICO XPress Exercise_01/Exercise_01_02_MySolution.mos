@@ -1,0 +1,30 @@
+!solving problem 2 by myself
+
+!Creating the model: Step 1
+model mySolutionExercise2
+uses "mmxprs"
+
+!Declarations: Step 2
+declarations	
+x1 :mpvar
+x2 :mpvar
+end-declarations
+
+
+!constraints
+3*x1+2*x2 <=130
+x1+2*x2 <= 100
+x1 <= 100
+x2 <= 150
+
+!objective function
+maximise(1.5*x1+2*x2)
+
+!Fancy Additions
+writeln("The solution value is "+getobjval)
+writeln("Produce " + getsol(x1) + " of product 1")
+writeln("Produce " + getsol(x2) + " of product 2")
+
+end-model
+
+

@@ -1,0 +1,6 @@
+lastDay: 7
+Machines: ["Mach1" "Mach2" "Mach3"]
+Products: ["Prod1" "Prod2"]
+ConCoef: [1 5 1 1 3 1]
+Capacity: [20 20 25 15 20 10 10 5 7 7 10 10 5 5 12 10 20 15 15 12 12]
+Income: [10 40]

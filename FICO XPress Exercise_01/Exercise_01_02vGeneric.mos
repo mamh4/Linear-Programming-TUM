@@ -1,0 +1,45 @@
+!@encoding CP1252
+model ModelName
+uses "mmxprs"; !gain access to the Xpress-Optimizer solver
+
+!Ok First we want to initialise
+
+declarations
+	!Sets
+	Products= {"Spaetzle","Pasta"} ! Remember we use '=' when assigning !Most Generic = set of string
+	Resources= {"Flour", "Eggs"} ! Remember we use '=' when assigning !Most Generic = set of string
+	!Parameters
+	Stock: array(Resources) of integer !Array of length resources
+	Demand: array(Products) of integer !Array of length products
+	Consumption: array(Products, Resources) of integer !Product i Consumption of Resource J 
+	Income: array(Products) of real !Ofcourse Income's array is same as the products array!
+	!Decision Variable
+	Quantity: array(Products) of mpvar ! Or declare in forall stateement with create check line 
+	!Profit Labelling
+	Profit: linctr
+end-declarations
+
+!We use ':=' when we assign values. Exception inside declaration zone we use just '='
+
+!Then we want to initailse
+initialisations from "lect2_3-data.txt" !I think I should write names of the variables I want initialised
+	Products
+	Resources
+	Stock
+	Demand
+	Consumption
+	Income
+end-initialisations
+
+!Constraints
+forall(r in Resources) sum(p in Products)
+	Consumption(p,r)*Quantity(p) <= Stock(r)
+
+forall(p in Products) 
+	Quantity(p) <= Demand(p)
+
+!Objective Function
+Profit := sum(p in Products) Income(p)*Quantity(p)
+maximise(Profit)
+
+end-model

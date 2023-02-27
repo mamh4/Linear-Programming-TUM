@@ -1,0 +1,65 @@
+!@encoding CP1252
+model ModelName
+uses "mmxprs", "mmodbc"; !This is to be able to access SQL data bases but also excel sheets. 
+						 !For Excel sheets we can also use "mmsheet"
+declarations
+	!Sets
+	Products: set of string
+	Resources: set of string
+	!Parameters
+	Stock: array(Resources) of integer
+	Demand: array(Products) of integer
+	Consumption:array(Products, Resources) of integer!This means that we have a product x resource matrix (row by column)
+	Income:array(Products) of real
+	!Decision variables
+	x: array(Products) of mpvar
+	!Constraints
+	ctCapacity: array(Resources) of linctr
+	ctSales: array(Products) of linctr
+	!ObjFunction
+	Profit: linctr
+	
+	
+	!This Part is for writing the solution in Excel
+	Sol: array(Products) of real
+	ObjValue: real
+
+end-declarations
+	
+
+initialisations from "mmsheet.excel:lect4dataL.xls"
+		Products as "[sheet1$B3:B4]" !do not forget dollar sign after sheet name
+		Resources as "[sheet1$C2:D2]" !NB NB NB NB """">>for sets<<""""" we DO include indices it VERY IMPORTANT
+		Stock as "noindex;[sheet1$C5:D5]" !Here we get rid of index, it means that we follow the order as is
+		Consumption as "noindex;[sheet1$C3:D4]" !it means that we follow the order of the sets as is 
+		[Demand, Income] as "[sheet1$B10:D11]"! Note !This is a new matrix! Here it will NOT be messed up if the order in the excel sheet changes, however, it will be messed up if I include no index
+		!Or
+		!Demand as "noindex;[sheet1$C10:C11]"
+		!Income as "noindex;[sheet1$D10:D11]"
+end-initialisations
+
+!Constraints
+forall (r in Resources) 
+	ctCapacity(r):= sum(p in Products) Consumption(p,r)*x(p) <= Stock(r) !do not forget outside declarations we use :=
+
+forall(p in Products)
+	ctSales(p):= x(p)<= Demand(p) !Again looks slightly awakward but it is because we are maximising I guess
+	
+	
+!Objective Function
+Profit:= sum(p in Products) x(p)*Income(p)
+maximise(Profit)
+
+
+
+!This part relates to writing the solution in Excel!!!! !NB Excel sheet needs to be open!!!!
+forall(p in Products) sol(p) := getsol(x(p))
+ObjValue := getobjval
+initialisations to "mmsheet.excel:lect4dataL.xls" !Note now we say "to" instead of from
+	sol as "[sheet1$G2:H3]"
+	ObjValue as "[sheet1$G6]"
+end-initialisations
+
+
+
+end-model	

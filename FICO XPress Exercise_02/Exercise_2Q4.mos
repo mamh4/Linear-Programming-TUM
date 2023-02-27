@@ -1,0 +1,41 @@
+!@encoding CP1252
+model ModelName
+uses "mmxprs"
+declarations
+!Sets
+Machines: set of string		
+Products: set of string
+lastDay: integer
+Days: range
+!Paramters
+Income: array(Products) of integer
+ConCoef: array(Machines,Products) of integer
+Capacity: array(Machines, Days) of integer
+!Decision variable
+x: array(Products, Days)of mpvar !why days?
+!Constraints
+ctCapacity: array(Machines, Days) of linctr
+!Objective function
+Profit: linctr
+end-declarations
+!FIRST WE NEED TO INITIALISE lastDAY, assign value then Initialise the rest
+initializations from "ex2-4.txt"
+lastDay
+end-initializations
+Days:= 1..lastDay !When assigning values outside of declaration we use ':=' instead of '='
+initialisations from "ex2-4.txt"
+	Machines; Products; Capacity; Income; ConCoef
+end-initialisations
+
+!mpvar must be integer
+forall(p in Products, d in Days)
+x(p,d) is_integer 
+
+!Machines constraint
+forall(m in Machines, t in Days)
+ctCapacity(m,t):= sum(pi in Products) ConCoef(m,pi)*x(pi,t) <= Capacity(m,t)
+
+Profit= sum(pi in Products, t in Days) Income(pi)*x(pi,t)
+maximize(Profit)
+
+end-model

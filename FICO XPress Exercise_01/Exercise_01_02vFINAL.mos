@@ -1,0 +1,48 @@
+!@encoding CP1252
+model ModelName
+uses "mmxprs"; !gain access to the Xpress-Optimizer solver
+
+declarations
+	!Sets
+	Products: set of string
+	Resources: set of string
+	!Parameters
+	Demand: array(Products) of integer
+	Stock: array(Resources) of integer
+	Consumption: array(Products,Resources) of integer 
+	Income: array(Products) of real
+	!Decision variables
+	Quantity: array(Products) of mpvar
+	!Objective function
+	Profit:linctr
+	!Constraints declaration (Helps for Duals and gives overall more info)
+	ctCapResource: array(Resources) of linctr
+	ctSalesLimit: array(Products) of linctr
+end-declarations	
+
+!assert(sum(p in Products) Demand(p) <= 100)
+
+!Initialisations
+initialisations from "lect2_3-data.txt"
+	Products; Resources; Income; Stock; Consumption; Demand
+end-initialisations
+
+!Constraints initialisation
+forall(p in Products) ctSalesLimit(p) :=
+Quantity(p)<=Demand(p)  !Very Awkward but it is because we are maximising?
+
+forall(r in Resources) ctCapResource(r) :=
+sum(p in Products)
+Consumption(p,r)*Quantity(p) <= Stock(r)
+
+!Opjective function initialisation
+Profit:= sum(p in Products) Quantity(p)*Income(p) !For every P in products multiply product(p) with Q(p)
+!NOTE: We use ':=' when we assign values. Exception inside declaration zone we use just '='
+maximise(Profit)
+writeln("The solution value is "+getobjval)
+
+forall(p in Products)
+write( " \n Product " , p,": ", getsol(Quantity(p)))
+
+
+end-model

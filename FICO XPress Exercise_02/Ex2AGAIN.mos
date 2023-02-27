@@ -1,0 +1,47 @@
+!@encoding CP1252
+model ModelName
+uses "mmxprs"; !gain access to the Xpress-Optimizer solver
+declarations
+!sets
+Products: set of string
+Machines: set of string
+!Paramters
+Income: array(Products) of integer
+Capacity: array(Machines) of integer
+ConCoef: array(Machines, Products) of integer
+!Decision variables
+x: array(Products) of mpvar
+!Capacity
+ctCapacity: array(Machines) of linctr
+!Objective Funcation
+Profit: linctr
+end-declarations
+
+initialisations from "ex2-2.txt"
+	Products; Machines; Income; Capacity; ConCoef
+end-initialisations
+
+(!
+!Constraint code 1| We want our decision variable to be Integer!!! unless you wanna cell decimal units
+forall(h in Products)
+x(h) is_integer
+ !)
+ 
+!Constraint code 2 | We want for every machine the sum of the quantities produced to be less than the capacity of that machine
+forall(m in Machines)
+ctCapacity(m):= sum(p in Products) ConCoef(m,p)*x(p) <= Capacity(m)
+
+!Objective function code# We want summation of quantities multiplied by the their respective mariginal Income 
+Profit := sum(p in Products) Income(p)*x(p)
+maximise(Profit)  
+
+!Slacks
+forall(z in Machines)
+writeln("Slack of ",z,": ",-getsol(ctCapacity(z)))!For slack we use -getsol, otherwise we use +getsol see below
+
+!Solutions
+forall(f in Products)
+writeln("Produce ", +getsol(x(f))," of product ", f)
+
+	
+end-model

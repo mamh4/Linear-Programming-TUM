@@ -1,0 +1,8 @@
+Jeans = {"basic-used","vintage", "used-finished"};
+Machines = {"coloring","sewing", "washing"};
+Income = [85,95,80];
+Consumption = [[8.5,8,3],
+			   [9,9,2],
+			   [7.5,8.5,2.5]];
+Capacities = [300,290,330];
+

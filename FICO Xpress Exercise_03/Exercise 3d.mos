@@ -1,0 +1,32 @@
+!@encoding CP1252
+model ModelName
+uses "mmxprs";
+!IPAD Exercies 3D ONEnote
+declarations
+	!Sets
+	Products: set of string
+	Machines: set of string
+	!Parameters
+	Income: array(Products) of real
+	Prod_Mach_Consumption: array(Machines, Products) of real
+	Capacity: array(Machines) of real
+	!Decision Variables
+	y: array(Machines) of mpvar 												!SWITCH TO MACHINES
+	!Constraints and Objective Function
+	ctIncome: array(Products) of linctr 										!Switch TO MACHINES
+	Profit: linctr
+end-declarations
+
+initialisations from "3c.txt"
+	Capacity; Prod_Mach_Consumption; Income; Products; Machines
+end-initialisations
+
+!Dual Constraint !Remember forall requires a set NOT an array
+forall(i in Products) ctIncome(i):=												!SAME AS FORMULATED
+	sum(j in Machines) Prod_Mach_Consumption(j,i)*y(j) >= Income(i)				!SAME AS FORMULATED
+	
+
+Profit:= sum(j in Machines) Capacity(j)*y(j)									!SAME AS FORMULATED
+minimise(Profit)
+
+end-model

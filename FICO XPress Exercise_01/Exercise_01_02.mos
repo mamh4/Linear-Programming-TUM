@@ -1,0 +1,15 @@
+model ModelName
+uses "mmxprs"; !gain access to the Xpress-Optimizer solver
+declarations
+x1: mpvar !kg of Spaetzle
+x2: mpvar !kg of Noodles
+end-declarations
+3*x1 + 2*x2 <= 130 !capacity of flour
+x1 + 2*x2 <= 100 !capacity of eggs
+x1 <= 100 !sales limit of spaetzle
+x2 <= 150 !sales limit of noodles
+maximize(1.5*x1 + 2*x2)
+writeln("The solution value is "+getobjval)
+writeln("Produce " + getsol(x1) + " of product 1")
+writeln("Produce " + getsol(x2) + " of product 2")
+end-model

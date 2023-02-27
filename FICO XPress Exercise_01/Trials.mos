@@ -1,0 +1,42 @@
+!@encoding CP1252
+model toto
+declarations
+d: integer
+end-declarations
+d:= 2+2-1
+writeln(d)
+!We use ':=' when we assign values. Exception inside declaration zone we use just '='
+!Or
+declarations
+c = 2
+end-declarations
+writeln(c)
+
+
+!Sets
+declarations
+z = {2,3,4,1,2,3}
+end-declarations
+writeln(z)
+forall(i in z) do sum(i)
+A = sum(i) 
+
+end-model
+
+
+
+(!
+model ModelName
+uses "mmxprs"; !gain access to the Xpress-Optimizer solver
+
+declarations
+	Products= {"Eggs", "Pasta"}
+	Demand: array(Products) of integer
+	d: integer
+end-declarations
+
+Demand::(["Eggs", "Pasta"])[10,5] !Naming + values
+
+
+end-model
+!)

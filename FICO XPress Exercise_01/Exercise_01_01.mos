@@ -1,0 +1,15 @@
+model ProductionPlan
+uses "mmxprs"; !gain access to the Xpress-Optimizer solver
+declarations
+x1: mpvar !pieces of product 1
+x2: mpvar !pieces of product 2
+end-declarations
+x1 + 5*x2 <= 30 !machine 1
+x1 + x2 <= 10 !machine 2
+3*x1 + x2 <= 24 !machine 3
+maximize(10*x1 + 40*x2)
+writeln("The solution value is "+getobjval)
+writeln(getsol(x1))
+writeln(getsol(x2))
+end-model
+

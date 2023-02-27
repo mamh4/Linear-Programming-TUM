@@ -1,0 +1,33 @@
+!@encoding CP1252
+model ModelName
+uses "mmxprs"
+declarations
+!Sets
+Machines: set of string		
+Products: set of string
+!Paramters
+Income: array(Products) of integer
+ConCoef: array(Machines,Products) of integer
+Capacity: array(Machines) of integer
+!Decision variable
+x: array(Products)of mpvar
+!Constraints
+ctCapacity: array(Machines) of linctr
+!Objective function
+Profit: linctr
+end-declarations
+
+initialisations from "ex2-2.txt"
+	Machines; Products; Capacity; Income; ConCoef
+end-initialisations
+
+!Machines constraint
+forall(m in Machines) 
+ctCapacity(m):= sum(p in Products) ConCoef(m,p)*x(p) <= Capacity(m)
+
+Profit =sum(p in Products)Income(p)*x(p)
+maximize(Profit)
+
+
+
+end-model

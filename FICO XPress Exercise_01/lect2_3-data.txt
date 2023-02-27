@@ -1,0 +1,6 @@
+Products: ["Spaetzle" "Pasta"]
+Resources: ["Flour" "Eggs"]
+Stock: [130 100]
+Demand: [100 150]
+Consumption: [3 1 2 2]
+Income: [1.5 2]
